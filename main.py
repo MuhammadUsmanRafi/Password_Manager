@@ -83,7 +83,7 @@ def adding_data():
 def search_data():
     search_website = website_entry.get()
     try:
-        with open("data.json","r") as file:
+        with open("data.json", "r") as file:
             data = json.load(file)
     except FileNotFoundError:
         messagebox.showerror(title="Error", message="The file doesn't exist.")
