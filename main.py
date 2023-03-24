@@ -66,7 +66,10 @@ def adding_data():
                     json.dump(new_data, file, indent=4)
             else:
                 # update the data with the new data
-                data.update(new_data)
+                try:
+                    data.update(new_data)
+                except AttributeError:
+                    pass
                 with open("data.json", "w") as file:
                     # write the new update data into the json file
                     json.dump(data, file, indent=4)
@@ -74,6 +77,23 @@ def adding_data():
                 website_entry.delete(0, END)
                 password_entry.delete(0, END)
                 website_entry.focus()
+
+
+# ---------------------------- SEARCH DATA ------------------------------- #
+def search_data():
+    search_website = website_entry.get()
+    try:
+        with open("data.json","r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.showerror(title="Error", message="The file doesn't exist.")
+    else:
+        if search_website in data:
+            email = data[search_website]["email"]
+            password = data[search_website]["password"]
+            messagebox.showinfo(title=search_website, message=f"Email: {email}\nPassword: {password}")
+        else:
+            messagebox.showerror(title="Error", message=f"The data about {search_website} is not exist before.")
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -97,7 +117,7 @@ password_label = Label(text="Password:", background="white", font=("Arial", "12"
 password_label.grid(row=3, column=0, sticky="nsew")
 
 website_entry = Entry(background="white", width=35)
-website_entry.grid(row=1, column=1, columnspan=2, sticky="nsew")
+website_entry.grid(row=1, column=1, sticky="nsew")
 website_entry.focus()
 
 Email_Username_entry = Entry(background="white", width=35)
@@ -113,5 +133,8 @@ generate_password_button.grid(row=3, column=2, sticky="nsew")
 
 add_button = Button(text="Add", background="white", foreground="black", width=35, command=adding_data)
 add_button.grid(row=4, column=1, columnspan=2, sticky="nsew")
+
+search_button = Button(text="Search", background="white", foreground="black", command=search_data)
+search_button.grid(row=1, column=2, sticky="nsew")
 
 window.mainloop()
