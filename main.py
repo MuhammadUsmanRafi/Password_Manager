@@ -1,7 +1,8 @@
+import json
 import random
 from tkinter import *
 from tkinter import messagebox
-import json
+
 import pyperclip
 
 
@@ -50,15 +51,26 @@ def adding_data():
         is_ok = messagebox.askokcancel(title="Detail Check", message=f"These are the detailed entered: \n Email:  "
                                                                      f"{name_of_user}\n  Password:  {password_hidden}\n"
                                                                      f" Are you sure to save these info?")
+        data = NONE
         if is_ok:
-            with open("data.json", "r") as file:
-                # read the data from the file and store it in to the data variable
-                data = json.load(file)
+            try:
+                with open("data.json", "r") as file:
+                    # read the data from the file and store it in to the data variable
+                    try:
+                        data = json.load(file)
+                    except ValueError:
+                        with open("data.json", "w") as file_1:
+                            json.dump(new_data, file_1, indent=4)
+            except FileNotFoundError:
+                with open("data.json", "w") as file:
+                    json.dump(new_data, file, indent=4)
+            else:
                 # update the data with the new data
                 data.update(new_data)
-            with open("data.json", "w") as file:
-                # write the new update data into the json file
-                json.dump(data, file, indent=4)
+                with open("data.json", "w") as file:
+                    # write the new update data into the json file
+                    json.dump(data, file, indent=4)
+            finally:
                 website_entry.delete(0, END)
                 password_entry.delete(0, END)
                 website_entry.focus()
