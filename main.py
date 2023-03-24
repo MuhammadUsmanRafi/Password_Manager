@@ -1,6 +1,7 @@
 import random
 from tkinter import *
 from tkinter import messagebox
+import json
 import pyperclip
 
 
@@ -33,6 +34,14 @@ def adding_data():
     name_of_website = website_entry.get()
     name_of_user = Email_Username_entry.get()
     password_hidden = password_entry.get()
+
+    new_data = {
+        name_of_website: {
+            "email": name_of_user,
+            "password": password_hidden
+        }
+    }
+
     if len(name_of_website) == 0:
         messagebox.showerror(title="Empty Field", message="Enter a name of the website\nPlease!")
     elif len(password_hidden) == 0:
@@ -42,8 +51,14 @@ def adding_data():
                                                                      f"{name_of_user}\n  Password:  {password_hidden}\n"
                                                                      f" Are you sure to save these info?")
         if is_ok:
-            with open("data.txt", "a") as file:
-                file.write(f"{name_of_website}   |   {name_of_user}   |   {password_hidden}\n")
+            with open("data.json", "r") as file:
+                # read the data from the file and store it in to the data variable
+                data = json.load(file)
+                # update the data with the new data
+                data.update(new_data)
+            with open("data.json", "w") as file:
+                # write the new update data into the json file
+                json.dump(data, file, indent=4)
                 website_entry.delete(0, END)
                 password_entry.delete(0, END)
                 website_entry.focus()
